@@ -1,20 +1,20 @@
 <template>
   <div class="goods">
-    <div class="menu-wrapper">
+    <div class="menu-wrapper" ref="menuWrapper">
       <ul>
-        <li v-for="item in goods" class="menu-item">
+        <li v-for="(item,$index) in goods" class="menu-item" :class="{'current':currentIndex== $index}" @click="selectMenu($index,$event)">
           <span class="text border-1px">
             <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
           </span>
         </li>
       </ul>
     </div>
-    <div class="foods-wrapper">
+    <div class="foods-wrapper" ref="foodWrapper">
       <ul>
-        <li class="food-list" v-for="item in goods ">
+        <li class="food-list food-list-hook" v-for="item in goods"  >
           <h1 class="title">{{item.name}}</h1>
           <ul>
-            <li v-for="food in item.foods" class="food-item border-1px">
+            <li v-for="food in item.foods" class="food-item border-1px" >
               <div class="icon">
                 <img width="57" height="57" :src="food.icon" alt="">
               </div>
@@ -40,6 +40,8 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import iscroll from 'better-scroll'
+
   const ERR_OK = 0
 
   export default{
@@ -50,7 +52,10 @@
       },
     data(){
         return{
-            goods : []
+            goods : [],
+          //左右联动
+            listHeight :[],
+          scrollY:0
         }
     },
       created () {
@@ -61,10 +66,62 @@
 
               if(response.errno ===ERR_OK){
                 this.goods = response.data
-                console.log(this.goods)
+                this.$nextTick(()=>{
+                  this._initScroll()
+                  this._createHeight()
+                })
 
               }
         })
+      },
+      computed:{
+        currentIndex(){
+            for(let i = 0; i<this.listHeight.length; i++){
+                let height1 = this.listHeight[i]
+                let height2 = this.listHeight[i+1]
+                if(!height2||(this.scrollY>=height1&&this.scrollY<height2)){
+                    return i
+                }
+            }
+          return 0
+        }
+      },
+      methods:{
+        _initScroll(){
+            this.menuScroll = new iscroll(this.$refs.menuWrapper,{
+                click:true
+            })
+
+            this.foodScroll = new iscroll(this.$refs.foodWrapper,{
+                probeType:3
+            })
+
+            this.foodScroll.on('scroll',(res)=>{
+                this.scrollY = Math.abs(Math.round(res.y))
+            })
+        },
+        _createHeight(){
+            let foodslit = this.$refs.foodWrapper.getElementsByClassName('food-list-hook');
+            let height = 0
+            this.listHeight.push(height)
+            //遍历
+            for(let i = 0; i<foodslit.length; i++){
+                let item = foodslit[i]
+                height +=item.clientHeight
+                this.listHeight.push(height)
+            }
+        },
+        selectMenu($index,$event){
+
+          if(!$event._constructed){
+              return
+          }
+          //
+          let foodslist = this.$refs.foodWrapper.getElementsByClassName('food-list-hook')
+          let elx = foodslist[$index]
+          this.foodScroll.scrollToElement(elx,300)
+
+        }
       }
   }
 </script>
@@ -86,6 +143,15 @@
       display: table
       height 54px
       padding 0 12px
+      &.current
+        position: relative
+        background #ffffff
+        z-index 10
+
+        margin-top -1px
+        .text
+          border-none()
+          font-weight 700
       .icon
         display: inline-block
         width 16px
@@ -143,11 +209,11 @@
           font-size 14px
           color rgb(7,17,27)
         .desc,.extra
-          line-height 10px
           font-size 10px
           color rgb(7,17,27)
         .desc
           margin-bottom 8px
+          line-height 12px
         .extra
           line-height 10px
           .sellCount
