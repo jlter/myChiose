@@ -35,12 +35,14 @@
         </li>
       </ul>
     </div>
+    <car :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></car>
   </div>
 
 </template>
 
 <script type="text/ecmascript-6">
   import iscroll from 'better-scroll'
+  import car from '../car/car.vue'
 
   const ERR_OK = 0
 
@@ -122,6 +124,9 @@
           this.foodScroll.scrollToElement(elx,300)
 
         }
+      },
+      components:{
+        car
       }
   }
 </script>
