@@ -29,13 +29,16 @@
                   <span class="now">￥{{food.price}}</span>
                   <span class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
                 </div>
+                <div class="cart-wrapper">
+                  <carcontrol :food="food"></carcontrol>
+                </div>
               </div>
             </li>
           </ul>
         </li>
       </ul>
     </div>
-    <car :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></car>
+    <car :selectfoods="selectfoods" :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></car>
   </div>
 
 </template>
@@ -43,6 +46,7 @@
 <script type="text/ecmascript-6">
   import iscroll from 'better-scroll'
   import car from '../car/car.vue'
+  import carcontrol from '../carcontrol/carcontrol.vue'
 
   const ERR_OK = 0
 
@@ -86,6 +90,17 @@
                 }
             }
           return 0
+        },
+        selectfoods(){
+            let foods = []
+            this.goods.forEach((good) =>{
+                good.foods.forEach((food) =>{
+                    if(food.count){
+                        foods.push(food)
+                    }
+                })
+            })
+          return foods
         }
       },
       methods:{
@@ -95,6 +110,7 @@
             })
 
             this.foodScroll = new iscroll(this.$refs.foodWrapper,{
+                click:true,
                 probeType:3
             })
 
@@ -126,7 +142,8 @@
         }
       },
       components:{
-        car
+        car,
+        carcontrol
       }
   }
 </script>
@@ -233,4 +250,8 @@
             text-decoration line-through
             font-size 10px
             color rgb(7,17,27)
+        .cart-wrapper
+          position: absolute
+          right 0
+          bottom 12px
 </style>
