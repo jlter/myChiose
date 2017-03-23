@@ -54,13 +54,13 @@
       "type": -1,
       "foods": [
         {
-          "name": "皮蛋瘦肉粥",
-          "price": 10,
+          "name": "清蒸小花",
+          "price": 15,
           "oldPrice": "",
-          "description": "咸粥",
+          "description": "血腥级别",
           "sellCount": 229,
           "rating": 100,
-          "info": "一碗皮蛋瘦肉粥，总是我到粥店时的不二之选。香浓软滑，饱腹暖心，皮蛋的Q弹与瘦肉的滑嫩伴着粥香溢于满口，让人喝这样的一碗粥也觉得心满意足",
+          "info": "贱贱的小花，拖出去打死算了",
           "ratings": [
             {
               "username": "3******c",
@@ -84,12 +84,12 @@
               "avatar": "http://static.galileo.xiaojukeji.com/static/tms/default_header.png"
             }
           ],
-          "icon": "http://fuss10.elemecdn.com/c/cd/c12745ed8a5171e13b427dbc39401jpeg.jpeg?imageView2/1/w/114/h/114",
-          "image": "http://fuss10.elemecdn.com/c/cd/c12745ed8a5171e13b427dbc39401jpeg.jpeg?imageView2/1/w/750/h/750"
+          "icon": "http://ranzhi.lol/img/tang.jpg",
+          "image": "http://ranzhi.lol/img/tang.jpg"
         },
         {
-          "name": "扁豆焖面",
-          "price": 14,
+          "name": "阿西吧炒面",
+          "price": 188,
           "oldPrice": "",
           "description": "",
           "sellCount": 188,
