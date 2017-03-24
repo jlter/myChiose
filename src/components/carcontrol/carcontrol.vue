@@ -53,13 +53,13 @@
     .car-cut
       display inline-block
       padding 6px
-      transition all 0.5s linear
+      transition all 0.3s linear
       .inner
         font-size 24px
         display inline-block
         line-height 24px
         color rgb(0,160,210)
-        transition all 0.5s linear
+        transition all 0.3s linear
       &.fade-transition
         opacity 1
         transform translate3D(0,0,0)
@@ -69,7 +69,7 @@
         opacity 0
         transform translate3D(24px,0,0)
         .inner
-          transform rotate(360deg)
+          transform rotate(180deg)
 
     .car-count
 

@@ -1,6 +1,6 @@
 <template>
   <div class="car">
-    <div class="content">
+    <div class="content" @click="togglelist">
       <div class="content-left">
         <!--购物车logo-->
         <div class="logo-wrapper">
@@ -15,39 +15,68 @@
 
       </div>
       <div class="content-right">
-        <div class="pay" :class="{'highlight':totalprice-minPrice>0}">
+        <div class="pay" :class="{'highlight':totalprice-minPrice >=0}">
           {{periceCount}}
         </div>
 
       </div>
+
     </div>
+    <transition name="fold">
+      <div class="car-list fold-transition" v-show="listshow">
+        <div class="list-header">
+          <h1 class="title">购物车</h1>
+          <span class="empty">清空</span>
+        </div>
+        <div class="list-content">
+          <ul>
+            <li class="food" v-for="food in selectfoods">
+              <span class="name">{{food.name}}</span>
+              <div class="price">
+                <span>￥{{food.price*food.count}}</span>
+              </div>
+              <div class="carcontrol-wrapper">
+                  <carcontrol :food="food"></carcontrol>
+              </div>
+            </li>
+          </ul>
+        </div>
+    </div>
+    </transition>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import carcontrol from '../carcontrol/carcontrol.vue'
   export default{
     props:{
         selectfoods:{
             type:Array,
             default(){
-                return [
-                  {
-                    price: 16,
-                    count: 1
-
-                  }
-                ]
+                return []
             }
-        }
-        ,
+        },
       deliveryPrice:{
-
           type:Number,
           default : 0
       },
       minPrice:{
         type:Number,
-        default:0
+        default : 0
+      }
+    },
+    data(){
+     return{
+         fold:true
+     }
+   },
+    methods:{
+      togglelist(){
+        if(!this.totalCount){
+          return
+        }
+        this.fold = !this.fold
+        console.log(this.fold)
       }
     },
     computed:{
@@ -66,21 +95,41 @@
               })
               return count
         },
-      periceCount(){
-            if(this.totalprice === 0){
-                return `需要￥${this.minPrice}起送`
-            }else if(this.totalprice<this.minPrice){
-                let diff =  this.minPrice -this.totalprice
-                return `还需要￥${diff}元起送`
-            }else{
-                return '去结算'
+        periceCount(){
+        if(this.totalprice === 0){
+          return `需要￥${this.minPrice}起送`
+        }else if(this.totalprice<this.minPrice){
+          let diff =  this.minPrice -this.totalprice
+          return `还需要￥${diff}元起送`
+        }else{
+          return '去结算'
+        }
+      },
+        listshow(){
+            if(!this.totalCount){
+              this.fold = true
+              return false
             }
+            let shows = !this.told
+            console.log(shows)
+            return shows
+
       }
+
+    },
+    components:{
+      carcontrol
     }
+
+
+
+
   }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+  @import "../../common/stylus/maxin.styl"
+
     .car
       position fixed
       z-index 1
@@ -173,5 +222,61 @@
             &.highlight
               background #00b43c
               color #ffffff
+
+
+      .car-list
+        position: absolute
+        left 0
+        top 0
+        z-index -1
+        width 100%
+        &.fold-transition
+          transition all 0.5s
+          transform translate3d(0,-100%,0)
+        &.fold-enter,&.fold-leave-active
+          transform translate3d(0,0,0)
+        .list-header
+          height 40px
+          line-height 40px
+          padding 0 18px
+          background #f3f5f7
+          border-break: 1px solid rgba(7, 17, 27, 0.1)
+          .title
+            float left
+            font-size 14px
+            color rgb(7,17,27)
+
+          .empty
+            float right
+            font-size 12px
+            color rgb(0,160,210)
+
+
+        .list-content
+          max-height 217px
+          padding 0 18px
+          overflow hidden
+          background #fff
+          .food
+            position: relative
+            padding 12px 0
+            box-sizing border-box
+            border-onePx(rgba(7,17,27,0.2))
+            .name
+              line-height 24px
+              font-size 14px
+              color rgb(7,17,27)
+            .price
+              position: absolute
+              right 90px
+              bottom 12px
+              line-height 24px
+              color rgb(240,20,20)
+              font-size 14px
+              font-weight 700
+            .carcontrol-wrapper
+              position:absolute
+              right 0
+              bottom 6px
 
 </style>
