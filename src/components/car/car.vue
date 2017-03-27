@@ -1,53 +1,61 @@
 <template>
-  <div class="car">
-    <div class="content" @click="togglelist">
-      <div class="content-left">
-        <!--购物车logo-->
-        <div class="logo-wrapper">
-          <div class="logo" :class="{'highlight':totalCount>0}">
-            <i class="icon-shopping_cart" :class="{'highlight':totalCount>0}"></i>
+  <div class="shopcar">
+    <div class="car">
+      <div class="content" @click="togglelist">
+        <div class="content-left">
+          <!--购物车logo-->
+          <div class="logo-wrapper">
+            <div class="logo" :class="{'highlight':totalCount>0}">
+              <i class="icon-shopping_cart" :class="{'highlight':totalCount>0}"></i>
+            </div>
+            <div class="num" v-show="totalCount>0">{{totalCount}}</div>
           </div>
-          <div class="num" v-show="totalCount>0">{{totalCount}}</div>
-        </div>
-        <div class="price" :class="{'highlight':totalprice>0}">￥{{totalprice}}</div>
-        <div class="desc">另需配送费{{deliveryPrice}}元</div>
+          <div class="price" :class="{'highlight':totalprice>0}">￥{{totalprice}}</div>
+          <div class="desc">另需配送费{{deliveryPrice}}元</div>
 
+
+        </div>
+        <div class="content-right">
+          <div class="pay" :class="{'highlight':totalprice-minPrice >=0}" @click.stop.event="pay">
+            {{periceCount}}
+        </div>
+
+        </div>
 
       </div>
-      <div class="content-right">
-        <div class="pay" :class="{'highlight':totalprice-minPrice >=0}">
-          {{periceCount}}
-        </div>
-
-      </div>
-
-    </div>
-    <transition name="fold">
-      <div class="car-list fold-transition" v-show="listshow">
-        <div class="list-header">
-          <h1 class="title">购物车</h1>
-          <span class="empty">清空</span>
-        </div>
-        <div class="list-content">
-          <ul>
-            <li class="food" v-for="food in selectfoods">
-              <span class="name">{{food.name}}</span>
-              <div class="price">
-                <span>￥{{food.price*food.count}}</span>
-              </div>
-              <div class="carcontrol-wrapper">
+      <transition name="fold">
+        <div class="car-list fold-transition" v-show="listshow" >
+          <div class="list-header">
+            <h1 class="title">购物车</h1>
+            <span class="empty" @click="empty">清空</span>
+          </div>
+          <div class="list-content" ref="listContent">
+            <ul>
+              <li class="food" v-for="food in selectfoods">
+                <span class="name">{{food.name}}</span>
+                <div class="price">
+                  <span>￥{{food.price*food.count}}</span>
+                </div>
+                <div class="carcontrol-wrapper">
                   <carcontrol :food="food"></carcontrol>
-              </div>
-            </li>
-          </ul>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
+      </transition>
     </div>
+    <transition name="fade">
+      <div class="mask fade-transition" @click="hidelist" v-show="listshow" ></div>
     </transition>
   </div>
+
+
 </template>
 
 <script type="text/ecmascript-6">
   import carcontrol from '../carcontrol/carcontrol.vue'
+  import BScroll from 'better-scroll'
   export default{
     props:{
         selectfoods:{
@@ -70,15 +78,7 @@
          fold:true
      }
    },
-    methods:{
-      togglelist(){
-        if(!this.totalCount){
-          return
-        }
-        this.fold = !this.fold
-        console.log(this.fold)
-      }
-    },
+
     computed:{
         totalprice(){
             let total = 0
@@ -88,42 +88,72 @@
           return total
         },
         totalCount(){
-              let count = 0
-              this.selectfoods.forEach((food)=>{
-                  count +=food.count
+            let count = 0
+            this.selectfoods.forEach((food)=>{
+                count +=food.count
 
-              })
-              return count
+            })
+            return count
         },
         periceCount(){
-        if(this.totalprice === 0){
-          return `需要￥${this.minPrice}起送`
-        }else if(this.totalprice<this.minPrice){
-          let diff =  this.minPrice -this.totalprice
-          return `还需要￥${diff}元起送`
-        }else{
-          return '去结算'
-        }
-      },
+          if(this.totalprice === 0){
+            return `需要￥${this.minPrice}起送`
+          }else if(this.totalprice<this.minPrice){
+            let diff =  this.minPrice -this.totalprice
+            return `还需要￥${diff}元起送`
+          }else{
+            return '去结算'
+          }
+        },
         listshow(){
             if(!this.totalCount){
               this.fold = true
               return false
             }
-            let shows = !this.told
-            console.log(shows)
-            return shows
+            let show = !this.fold
+            if(show){
+                this.$nextTick(()=>{
+                    if(!this.scroll) {
+                      this.scroll = new BScroll(this.$refs.listContent,{
+                        click: true
+                      })
+                    }else{
+                        this.scroll.refresh()
+                    }
+                })
+            }
+            return show
+        }
 
+    },
+    methods:{
+      togglelist(){
+        if(!this.totalCount){
+          return
+        }
+        this.fold = !this.fold
+        console.log(this.fold)
+      },
+      hidelist(){
+        this.fold = true
+      },
+      pay(){
+          if(this.totalprice<this.minPrice){
+              return
+          }else{
+            alert('买买买');
+          }
+
+      },
+      empty(){
+        this.selectfoods.forEach((food)=>{
+          food.count = 0
+        })
       }
-
     },
     components:{
       carcontrol
     }
-
-
-
-
   }
 </script>
 
@@ -132,7 +162,7 @@
 
     .car
       position fixed
-      z-index 1
+      z-index 10
       left 0
       bottom 0
       width 100%
@@ -278,5 +308,21 @@
               position:absolute
               right 0
               bottom 6px
+
+    .mask
+      position fixed
+      top:0
+      left 0
+      width 100%
+      height 100%
+      z-index 9
+      -webkit-backdrop-filter blur(10px)
+      &.fade-transition
+        transition all 0.3s
+        opacity 1
+        background rgba(7,17,27,0.6)
+      &.fade-enter,&.fade-leave-active
+        opacity 0
+        background rgba(7,17,27,0)
 
 </style>

@@ -11,10 +11,10 @@
     </div>
     <div class="foods-wrapper" ref="foodWrapper">
       <ul>
-        <li class="food-list food-list-hook" v-for="item in goods"  >
+        <li class="food-list food-list-hook" v-for="item in goods" >
           <h1 class="title">{{item.name}}</h1>
           <ul>
-            <li v-for="food in item.foods" class="food-item border-1px" >
+            <li v-for="food in item.foods" class="food-item border-1px" @click="selectfood(food,$event)">
               <div class="icon">
                 <img width="57" height="57" :src="food.icon" alt="">
               </div>
@@ -39,6 +39,7 @@
       </ul>
     </div>
     <car :selectfoods="selectfoods" :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></car>
+    <food :food="selectedfoods" ref="food"></food>
   </div>
 
 </template>
@@ -47,6 +48,7 @@
   import iscroll from 'better-scroll'
   import car from '../car/car.vue'
   import carcontrol from '../carcontrol/carcontrol.vue'
+  import food from '../food/food.vue'
 
   const ERR_OK = 0
 
@@ -56,12 +58,13 @@
               type:Object
           }
       },
-    data(){
+      data(){
         return{
             goods : [],
           //左右联动
             listHeight :[],
-          scrollY:0
+            scrollY:0,
+          selectedfoods:{}
         }
     },
       created () {
@@ -139,11 +142,22 @@
           let elx = foodslist[$index]
           this.foodScroll.scrollToElement(elx,300)
 
+        },
+        selectfood(food,event){
+          if(!event._constructed){
+            return
+          }
+          this.selectedfoods = food
+          this.$refs.food.show()
+
+
         }
       },
+
       components:{
         car,
-        carcontrol
+        carcontrol,
+        food
       }
   }
 </script>
