@@ -1,21 +1,19 @@
-# ele
+# 外卖点餐界面
 
-> ele copy
+> 根据饿了么订餐系统的mook做的小东西
 
-## Build Setup
-
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-```
-
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+	根据饿了么的界面利用vue做的样式，当然根据老师带着敲的，主要是熟悉代码结构。
+	
+	
+	
+	安装：
+	
+		1.npm install   
+			安装依赖，不过可能存在依赖版本过低，可以考虑update一波
+		2.npm run dev
+			运行依赖并且在浏览器的8080端口进行演示。
+		
+		
+		
+	简言：
+		整个项目借鉴意义不是很大，主要是了解到如何进行手机端的vue+flex做布局处理。
